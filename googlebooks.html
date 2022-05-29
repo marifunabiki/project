@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="css/sample.css">
+
+<title>GoogleBook検索</title>
+
+<style>
+  body{
+          background: url("pooh.jpg");
+          background-repeat: no-repeat;
+          background-size: 50%;
+          background-position: center top;
+          background-color: rgb(245, 238, 198);
+  }
+  </style>
+
+</head>
+<body>
+
+  <header>
+    <h1>GoogleBooks検索</h1>
+    <p>
+      <input type="text" id="keyword" value="プーさん">
+      <button id="readbook">データ読み込み</button>
+    </p>
+  </header>
+
+  <main>
+    <table border=1 id="content">
+      <tr>
+        <th >タイトル</th>
+        <th>書店</th>
+        <th>著者</th>
+        </tr>
+    </table>
+  </main>
+
+
+<script src="js/jquery-3.5.1.min.js"></script>
+<script>
+//クリックして検索
+  // 4. クリックイベントで括る
+  // 5. id="keyword"の入力値を取得 → URLの"?q=jquery"の"queryの文字を取得した入力値（変数）に変える"
+var btn =document.getElementById('readbook');
+var box =$('#keyword');
+box.keypress(function (e) {   //　e = 引数：引き渡す数
+  if (e.keyCode == 13) { //13はエンターキー
+    addbook();
+ }   
+});
+
+btn.addEventListener('click', addbook , false);
+
+function addbook() {
+  const node=document.getElementById('content');
+  while(node.firstChild){ 
+    node.removeChild(node.firstChild);
+  }
+  $('#content').append('<tr><th>タイトル</th><th>書店</th><th>著者</th></tr>');
+
+  // 1. $.get() を使って 情報を取得する
+  // 2. JSONデータ構造を基に本のタイトルを取得する
+  // 3. 本のタイトル情報をHTMLに出力する
+  var bookname = $('#keyword');
+
+  // $.get() を使う[開始]
+  $.get('https://www.googleapis.com/books/v1/volumes?q='+bookname.val(), function (data) {
+    //console.log(data);
+    const items = data.items
+    for(let i = 0; i < items.length; i++) {
+      console.log(items[i]);
+      const title = items[i].volumeInfo.title;
+      const store = items[i].volumeInfo.publisher;
+      const author = items[i].volumeInfo.authors;
+      $('#content').append(`<tr><td>${title}</td><td>${store}</td><td>${author}</td></tr>`) // document.getElementById('content').append
+    }
+  });
+
+  // ---ここからは課題！
+
+  // 6. 出版社も表示してみよう！（データ構造はconsole.logで確認！！）
+  // 7. 削除機能
+
+}
+</script>
+</body>
+</html>
